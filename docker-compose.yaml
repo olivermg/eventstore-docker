@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  eventstore:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./volumes/eventstore:/var/lib/eventstore/:Z
+    ports:
+      - "2113:2113/tcp"
+    restart: unless-stopped
+
