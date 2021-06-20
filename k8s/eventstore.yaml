@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eventstore
+spec:
+  selector:
+    matchLabels:
+      run: eventstore
+  replicas: 1
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      labels:
+        run: eventstore
+    spec:
+      containers:
+      - name: eventstore
+        image: eventstore:latest
+        imagePullPolicy: IfNotPresent
+#        args:
+#        - sleep
+#        - "120"
+#        volumeMounts:
+#        - name: statsweb-server-root
+#          mountPath: "/home/appuser"
+#          readOnly: false
+#      volumes:
+#      - name: statsweb-server-root
+#        persistentVolumeClaim:
+#          claimName: statsweb-server-nfs
+
