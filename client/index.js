@@ -5,16 +5,20 @@ const server = process.env.EVENTSTORE_SERVER || 'http://localhost:2113';
 const client = EventStoreDBClient.connectionString(`esdb://admin:changeit@${server}?tls=false`);
 
 async function appendEvent() {
+	const randomKey = `key${Math.floor(Math.random() * 10000)}`;
+	const randomValue = `${randomKey}-value`;
+
 	const event = jsonEvent({
 		type: 'TestEvent',
 		data: {
 			entityId,
-			importantData: 'foobare',
+			importantData: randomValue,
+			[randomKey]: randomValue,
 			date: `${new Date()}`
 		}
 	});
 
-	return client.appendToStream(`orders-${entityId}`, event);
+	return client.appendToStream(`order-${entityId}`, event);
 }
 
 async function appendEvents() {
@@ -22,7 +26,7 @@ async function appendEvents() {
 }
 
 async function readEvents() {
-	const events = await client.readStream(`orders-${entityId}`, {
+	const events = await client.readStream(`order-${entityId}`, {
 		direction: FORWARD,
 		fromRevision: START,
 		maxCount: 10
@@ -33,7 +37,7 @@ async function readEvents() {
 
 async function subscribeToEvents() {
 	return client
-		.subscribeToStream(`orders-${entityId}`)
+		.subscribeToStream(`order-${entityId}`)
 		.on('data', (resolvedEvent) => {
 			console.log('received event', resolvedEvent);
 		});
@@ -42,4 +46,3 @@ async function subscribeToEvents() {
 appendEvents()
 	//.then(readEvents);
 	.then(subscribeToEvents);
-
