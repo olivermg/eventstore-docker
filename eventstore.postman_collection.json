@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "a38ff6ff-3f94-4507-9422-c75b4f0eebea",
+		"name": "eventstore",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "projections list",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:2113/projections/any",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projections",
+						"any"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "projection $by_category enable",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:2113/projection/$by_category/command/enable",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projection",
+						"$by_category",
+						"command",
+						"enable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "projection entity-orders create",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "fromCategory(\"order\")\n    .foreachStream()\n    .when({\n        $init: function () {\n            return { data: {} };\n        },\n        $any: function (state, event) {\n            state.data = { ...state.data, ...event.data };\n        }\n    })",
+					"options": {
+						"raw": {
+							"language": "javascript"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:2113/projections/continuous?name=entity-orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projections",
+						"continuous"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "entity-orders"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "projection entity-orders delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:2113/projection/entity-orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projection",
+						"entity-orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "projection entity-orders disable",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:2113/projection/entity-orders/command/disable",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projection",
+						"entity-orders",
+						"command",
+						"disable"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "projection entity-orders get state",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:2113/projection/entity-orders/state?partition=order-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projection",
+						"entity-orders",
+						"state"
+					],
+					"query": [
+						{
+							"key": "partition",
+							"value": "order-1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "projection entity-orders get result",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:2113/projection/entity-orders/result?partition=order-1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "2113",
+					"path": [
+						"projection",
+						"entity-orders",
+						"result"
+					],
+					"query": [
+						{
+							"key": "partition",
+							"value": "order-1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
