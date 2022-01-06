@@ -3,6 +3,19 @@
 #   to be a config directive and thus will fail with "unknown config parameter"
 #   error
 
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: evstore-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 256Mi
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,16 +39,15 @@ spec:
         args:
         - '--insecure'
         - '--run-projections=All'
-#        - sleep
-#        - "120"
-#        volumeMounts:
-#        - name: statsweb-server-root
-#          mountPath: "/home/appuser"
-#          readOnly: false
-#      volumes:
-#      - name: statsweb-server-root
-#        persistentVolumeClaim:
-#          claimName: statsweb-server-nfs
+        - '--disable-log-file'
+        volumeMounts:
+        - name: evstore-data
+          mountPath: "/var/lib/eventstore"
+          readOnly: false
+      volumes:
+      - name: evstore-data
+        persistentVolumeClaim:
+          claimName: evstore-data
 
 ---
 
