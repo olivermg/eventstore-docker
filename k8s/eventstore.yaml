@@ -1,23 +1,31 @@
+# NOTE: don't name any entities "eventstore*", as this will create env vars like
+#   EVENTSTORE_* within the pods and eventstore docker container will assume it
+#   to be a config directive and thus will fail with "unknown config parameter"
+#   error
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eventstore
+  name: evstore
 spec:
   selector:
     matchLabels:
-      run: eventstore
+      run: evstore
   replicas: 1
-  revisionHistoryLimit: 1
+  revisionHistoryLimit: 2
   template:
     metadata:
       labels:
-        run: eventstore
+        run: evstore
     spec:
       containers:
-      - name: eventstore
-        image: eventstore:latest
-        imagePullPolicy: IfNotPresent
-#        args:
+      - name: evstore
+        image: eventstore/eventstore:latest
+        # imagePullPolicy: IfNotPresent
+        # command: ['sh', '-c', 'set; /opt/eventstore/eventstored']
+        args:
+        - '--insecure'
+        - '--run-projections=All'
 #        - sleep
 #        - "120"
 #        volumeMounts:
@@ -29,3 +37,25 @@ spec:
 #        persistentVolumeClaim:
 #          claimName: statsweb-server-nfs
 
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: evstore-service
+spec:
+  #type: LoadBalancer
+  type: NodePort
+  selector:
+    run: evstore
+  ports:
+  - name: evstore-http
+    protocol: TCP
+    port: 2113
+    targetPort: 2113
+    nodePort: 30250
+  - name: evstore-tcp
+    protocol: TCP
+    port: 1113
+    targetPort: 1113
+    nodePort: 30251
