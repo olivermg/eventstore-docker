@@ -12,7 +12,7 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 256Mi
+      storage: 1Gi
 
 ---
 
@@ -31,11 +31,19 @@ spec:
       labels:
         run: evstore
     spec:
+      initContainers:
+      - name: init-evstore
+        image: busybox:1.35
+        command: ['sh', '-c', 'chown -R 1000:1000 /var/lib/eventstore']
+        volumeMounts:
+        - name: evstore-data
+          mountPath: "/var/lib/eventstore"
+          readOnly: false
       containers:
       - name: evstore
         image: eventstore/eventstore:21.10.1-bionic
         # imagePullPolicy: IfNotPresent
-        # command: ['sh', '-c', 'set; /opt/eventstore/eventstored']
+        # command: ['sh', '-c', 'set; echo; id; echo; /opt/eventstore/eventstored']
         args:
         - '--insecure'
         - '--run-projections=All'
