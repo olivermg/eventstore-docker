@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
       - name: evstore
-        image: eventstore/eventstore:latest
+        image: eventstore/eventstore:21.10.1-bionic
         # imagePullPolicy: IfNotPresent
         # command: ['sh', '-c', 'set; /opt/eventstore/eventstored']
         args:
